@@ -1,15 +1,15 @@
 import secrets
 import time
-from typing import Optional
+from typing import Annotated, Optional
 
-from fastapi import APIRouter, HTTPException, Request, Response
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import BaseModel
+from sqlite3 import Connection
+
+from app.db import get_db, verify_user_credentials
 
 SESSION_TTL_SEC = 7 * 24 * 3600
 SESSION_COOKIE = "pm_session"
-
-VALID_USERNAME = "user"
-VALID_PASSWORD = "password"
 
 _sessions: dict[str, tuple[str, float]] = {}
 
@@ -48,8 +48,12 @@ class LoginBody(BaseModel):
 
 
 @router.post("/login")
-def login(body: LoginBody, response: Response) -> dict[str, str | bool]:
-    if body.username != VALID_USERNAME or body.password != VALID_PASSWORD:
+def login(
+    body: LoginBody,
+    response: Response,
+    conn: Annotated[Connection, Depends(get_db)],
+) -> dict[str, str | bool]:
+    if not verify_user_credentials(conn, body.username, body.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     token = create_session(body.username)
     response.set_cookie(
@@ -61,7 +65,7 @@ def login(body: LoginBody, response: Response) -> dict[str, str | bool]:
         path="/",
         secure=False,
     )
-    return {"ok": True, "username": VALID_USERNAME}
+    return {"ok": True, "username": body.username}
 
 
 @router.post("/logout")

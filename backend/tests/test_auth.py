@@ -6,9 +6,11 @@ from app.main import app
 
 
 @pytest.fixture
-def client() -> TestClient:
+def client(tmp_path, monkeypatch) -> TestClient:
+    monkeypatch.setenv("PM_DATABASE_PATH", str(tmp_path / "auth.db"))
     reset_sessions()
-    return TestClient(app)
+    with TestClient(app) as c:
+        yield c
 
 
 def test_login_success_sets_http_only_cookie(client: TestClient) -> None:
@@ -23,15 +25,16 @@ def test_login_success_sets_http_only_cookie(client: TestClient) -> None:
     assert "pm_session=" in set_cookie
 
 
-def test_login_wrong_password() -> None:
+def test_login_wrong_password(tmp_path, monkeypatch) -> None:
+    monkeypatch.setenv("PM_DATABASE_PATH", str(tmp_path / "auth.db"))
     reset_sessions()
-    c = TestClient(app)
-    response = c.post(
-        "/api/auth/login",
-        json={"username": "user", "password": "wrong"},
-    )
-    assert response.status_code == 401
-    assert c.get("/api/auth/me").status_code == 401
+    with TestClient(app) as c:
+        response = c.post(
+            "/api/auth/login",
+            json={"username": "user", "password": "wrong"},
+        )
+        assert response.status_code == 401
+        assert c.get("/api/auth/me").status_code == 401
 
 
 def test_me_after_login(client: TestClient) -> None:
@@ -41,10 +44,11 @@ def test_me_after_login(client: TestClient) -> None:
     assert me.json()["username"] == "user"
 
 
-def test_me_without_cookie() -> None:
+def test_me_without_cookie(tmp_path, monkeypatch) -> None:
+    monkeypatch.setenv("PM_DATABASE_PATH", str(tmp_path / "auth.db"))
     reset_sessions()
-    c = TestClient(app)
-    assert c.get("/api/auth/me").status_code == 401
+    with TestClient(app) as c:
+        assert c.get("/api/auth/me").status_code == 401
 
 
 def test_logout_clears_session(client: TestClient) -> None:

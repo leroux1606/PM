@@ -1,16 +1,37 @@
+from contextlib import asynccontextmanager
 from pathlib import Path
+
+from dotenv import load_dotenv
+
+# uvicorn does not load `.env` by default; load before importing `app.*` packages.
+_REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+_BACKEND_ROOT = Path(__file__).resolve().parent.parent
+load_dotenv(_REPO_ROOT / ".env")
+load_dotenv(_BACKEND_ROOT / ".env")
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
+from app.ai_routes import router as ai_router
 from app.auth import router as auth_router
+from app.board import router as board_router
+from app.db import init_db
 
 SITE_DIR = Path(__file__).resolve().parent.parent / "site"
 
-app = FastAPI(title="PM MVP")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_db()
+    yield
+
+
+app = FastAPI(title="PM MVP", lifespan=lifespan)
 
 app.include_router(auth_router)
+app.include_router(board_router)
+app.include_router(ai_router)
 
 
 @app.get("/ping")

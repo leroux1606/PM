@@ -1,18 +1,42 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { afterEach, beforeEach, vi } from "vitest";
+
 import { KanbanBoard } from "@/components/KanbanBoard";
 
 const getFirstColumn = () => screen.getAllByTestId(/column-/i)[0];
 
 describe("KanbanBoard", () => {
-  it("renders five columns", () => {
+  beforeEach(() => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = typeof input === "string" ? input : input.toString();
+        if (!url.includes("/api/board")) {
+          return new Response(null, { status: 404 });
+        }
+        if (init?.method === "PUT") {
+          return new Response(null, { status: 200 });
+        }
+        return Response.json({ columns: [], cards: {} });
+      })
+    );
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("renders five columns after load", async () => {
     render(<KanbanBoard />);
-    expect(screen.getAllByTestId(/column-/i)).toHaveLength(5);
+    await waitFor(() => {
+      expect(screen.getAllByTestId(/column-/i)).toHaveLength(5);
+    });
   });
 
   it("renames a column", async () => {
     render(<KanbanBoard />);
-    const column = getFirstColumn();
+    const column = await waitFor(() => getFirstColumn());
     const input = within(column).getByLabelText("Column title");
     await userEvent.clear(input);
     await userEvent.type(input, "New Name");
@@ -21,7 +45,7 @@ describe("KanbanBoard", () => {
 
   it("adds and removes a card", async () => {
     render(<KanbanBoard />);
-    const column = getFirstColumn();
+    const column = await waitFor(() => getFirstColumn());
     const addButton = within(column).getByRole("button", {
       name: /add a card/i,
     });

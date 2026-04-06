@@ -126,13 +126,13 @@ Success criteria for "tests pass" in each phase: relevant automated tests green;
 
 ### Checklist
 
-- [ ] Define tables: at minimum **users** (or single-user placeholder with future multi-user columns), **session** storage if not only in-memory, and **kanban JSON** per user (column name and migration/versioning approach).
-- [ ] Save an example JSON shape matching `BoardData` in `frontend/src/lib/kanban.ts` (or documented delta) in `docs/`.
-- [ ] Document create-if-not-exists path for DB file location in container/volume.
+- [x] Define tables: at minimum **users** (or single-user placeholder with future multi-user columns), **session** storage if not only in-memory, and **kanban JSON** per user (column name and migration/versioning approach).
+- [x] Save an example JSON shape matching `BoardData` in `frontend/src/lib/kanban.ts` (or documented delta) in `docs/`.
+- [x] Document create-if-not-exists path for DB file location in container/volume.
 
 ### Tests
 
-- N/A or light migration smoke test once ORM/raw SQL layer exists.
+- [x] N/A or light migration smoke test once ORM/raw SQL layer exists.
 
 ### Success criteria
 
@@ -147,14 +147,14 @@ Success criteria for "tests pass" in each phase: relevant automated tests green;
 
 ### Checklist
 
-- [ ] GET board for current user (default empty board shape if none).
-- [ ] PATCH or PUT to replace/update board JSON with validation.
-- [ ] All routes require authenticated session from Part 4.
-- [ ] SQLite file created on first run if missing.
+- [x] GET board for current user (default empty board shape if none).
+- [x] PATCH or PUT to replace/update board JSON with validation.
+- [x] All routes require authenticated session from Part 4.
+- [x] SQLite file created on first run if missing.
 
 ### Tests
 
-- [ ] pytest: full API coverage for happy paths and auth failures; concurrent requests optional for MVP.
+- [x] pytest: full API coverage for happy paths and auth failures; concurrent requests optional for MVP.
 
 ### Success criteria
 
@@ -168,14 +168,14 @@ Success criteria for "tests pass" in each phase: relevant automated tests green;
 
 ### Checklist
 
-- [ ] Replace local-only `useState` seed with load from API after login.
-- [ ] Debounce or explicit save for column rename, drag, add, delete (choose simplest consistent strategy).
-- [ ] Error handling for network/API errors (minimal, per project standards).
+- [x] Replace local-only `useState` seed with load from API after login.
+- [x] Debounce or explicit save for column rename, drag, add, delete (choose simplest consistent strategy).
+- [x] Error handling for network/API errors (minimal, per project standards).
 
 ### Tests
 
-- [ ] Playwright: login, mutate board, reload, assert persistence.
-- [ ] Vitest for any extracted client logic.
+- [x] Playwright: login, mutate board, reload, assert persistence.
+- [x] Vitest for any extracted client logic.
 
 ### Success criteria
 
@@ -190,13 +190,13 @@ Success criteria for "tests pass" in each phase: relevant automated tests green;
 
 ### Checklist
 
-- [ ] Config: `OPENROUTER_API_KEY`, base URL, model `openai/gpt-oss-120b` from env.
-- [ ] Single endpoint or internal function that performs one chat completion.
-- [ ] Document how to run integration test with real key vs mocked tests in CI.
+- [x] Config: `OPENROUTER_API_KEY`, base URL, model `openai/gpt-oss-120b` from env.
+- [x] Single endpoint or internal function that performs one chat completion.
+- [x] Document how to run integration test with real key vs mocked tests in CI.
 
 ### Tests
 
-- [ ] pytest with mocked OpenRouter HTTP; optional marked integration test with real API.
+- [x] pytest with mocked OpenRouter HTTP; optional marked integration test with real API.
 
 ### Success criteria
 
@@ -210,13 +210,13 @@ Success criteria for "tests pass" in each phase: relevant automated tests green;
 
 ### Checklist
 
-- [ ] Define JSON schema / structured output format agreed with the model (OpenRouter structured outputs).
-- [ ] Apply board updates only after validation; reject malformed AI payloads safely.
-- [ ] Persist updated board when applied.
+- [x] Define JSON schema / structured output format agreed with the model (OpenRouter structured outputs).
+- [x] Apply board updates only after validation; reject malformed AI payloads safely.
+- [x] Persist updated board when applied.
 
 ### Tests
 
-- [ ] pytest: fixture AI responses (mocked) update board correctly; invalid payloads do not corrupt DB.
+- [x] pytest: fixture AI responses (mocked) update board correctly; invalid payloads do not corrupt DB.
 
 ### Success criteria
 
@@ -230,14 +230,14 @@ Success criteria for "tests pass" in each phase: relevant automated tests green;
 
 ### Checklist
 
-- [ ] Sidebar component(s) under `frontend/src/components/` (and `ui` subfolder if shared primitives are added) per project conventions.
-- [ ] Chat history display; send message; loading/error states.
-- [ ] On successful structured board update from API, refetch or merge state and re-render Kanban.
+- [x] Sidebar component(s) under `frontend/src/components/` (and `ui` subfolder if shared primitives are added) per project conventions.
+- [x] Chat history display; send message; loading/error states.
+- [x] On successful structured board update from API, refetch or merge state and re-render Kanban.
 
 ### Tests
 
-- [ ] Playwright: send message (mock backend or stub) and assert UI refresh hook fires when board changes.
-- [ ] Component tests for sidebar if logic warrants.
+- [x] Playwright: send message (mock backend or stub) and assert UI refresh hook fires when board changes.
+- [x] Component tests for sidebar if logic warrants.
 
 ### Success criteria
 

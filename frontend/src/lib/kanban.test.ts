@@ -1,4 +1,19 @@
-import { moveCard, type Column } from "@/lib/kanban";
+import { isBoardEmpty, moveCard, type Column } from "@/lib/kanban";
+
+describe("isBoardEmpty", () => {
+  it("is true for an empty board", () => {
+    expect(isBoardEmpty({ columns: [], cards: {} })).toBe(true);
+  });
+
+  it("is false when a column exists", () => {
+    expect(
+      isBoardEmpty({
+        columns: [{ id: "c", title: "T", cardIds: [] }],
+        cards: {},
+      })
+    ).toBe(false);
+  });
+});
 
 describe("moveCard", () => {
   const baseColumns: Column[] = [

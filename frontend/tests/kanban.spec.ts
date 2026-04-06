@@ -22,26 +22,49 @@ test("adds a card to a column", async ({ page }) => {
   await expect(firstColumn.getByText("Playwright card")).toBeVisible();
 });
 
+test("persists a new card across reload", async ({ page }) => {
+  await page.goto("/");
+  const label = `Persist ${Date.now()}`;
+  const firstColumn = page.locator('[data-testid^="column-"]').first();
+  const savedWithLabel = page.waitForResponse(
+    (r) =>
+      r.url().includes("/api/board") &&
+      r.request().method() === "PUT" &&
+      r.ok() &&
+      (r.request().postData()?.includes(label) ?? false)
+  );
+  await firstColumn.getByRole("button", { name: /add a card/i }).click();
+  await firstColumn.getByPlaceholder("Card title").fill(label);
+  await firstColumn.getByPlaceholder("Details").fill("e2e persistence");
+  await firstColumn.getByRole("button", { name: /add card/i }).click();
+  await expect(firstColumn.getByText(label)).toBeVisible();
+  await savedWithLabel;
+
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "Kanban Studio" })).toBeVisible();
+  await expect(page.getByText(label)).toBeVisible();
+});
+
 test("moves a card between columns", async ({ page }) => {
   await page.goto("/");
   const card = page.getByTestId("card-card-1");
   const targetColumn = page.getByTestId("column-col-review");
+  await card.scrollIntoViewIfNeeded();
+  await targetColumn.scrollIntoViewIfNeeded();
   const cardBox = await card.boundingBox();
   const columnBox = await targetColumn.boundingBox();
   if (!cardBox || !columnBox) {
     throw new Error("Unable to resolve drag coordinates.");
   }
-
-  await page.mouse.move(
-    cardBox.x + cardBox.width / 2,
-    cardBox.y + cardBox.height / 2
-  );
+  const startX = cardBox.x + cardBox.width / 2;
+  const startY = cardBox.y + cardBox.height / 2;
+  const endX = columnBox.x + columnBox.width / 2;
+  const endY = columnBox.y + 280;
+  await page.mouse.move(startX, startY);
   await page.mouse.down();
-  await page.mouse.move(
-    columnBox.x + columnBox.width / 2,
-    columnBox.y + 120,
-    { steps: 12 }
-  );
+  // dnd-kit PointerSensor needs a small move after press to activate the drag.
+  await page.mouse.move(startX + 10, startY + 10, { steps: 2 });
+  await page.mouse.move(endX, endY, { steps: 24 });
   await page.mouse.up();
   await expect(targetColumn.getByTestId("card-card-1")).toBeVisible();
 });

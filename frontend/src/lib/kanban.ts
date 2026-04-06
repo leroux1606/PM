@@ -15,6 +15,9 @@ export type BoardData = {
   cards: Record<string, Card>;
 };
 
+export const isBoardEmpty = (b: BoardData): boolean =>
+  b.columns.length === 0 && Object.keys(b.cards).length === 0;
+
 export const initialData: BoardData = {
   columns: [
     { id: "col-backlog", title: "Backlog", cardIds: ["card-1", "card-2"] },

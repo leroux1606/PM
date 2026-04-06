@@ -21,13 +21,15 @@ export default defineConfig({
   },
   use: {
     baseURL,
+    // Sidebar + five columns need horizontal room so drag tests stay reliable.
+    viewport: { width: 1600, height: 900 },
     trace: "retain-on-failure",
   },
   webServer: {
     command: startApi,
     url: readyUrl,
     reuseExistingServer: true,
-    timeout: 300_000,
+    timeout: 600_000,
   },
   projects: [
     {

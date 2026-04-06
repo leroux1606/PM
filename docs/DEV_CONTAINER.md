@@ -27,7 +27,7 @@ The **`Containerfile`** builds the frontend (`npm run build`) and copies **`out/
 ## Ports and data
 
 - **On your PC:** use **`http://127.0.0.1:8001`** (see `compose.yaml`: **`8001:8000`**). **Inside** the container, uvicorn still listens on **8000**; only the published host port is **8001**. Change the left side of the mapping in `compose.yaml` if you need another host port.
-- Volume **`pm_data`** is mounted at **`/data`** in the container for a future SQLite file (Part 6+).
+- Volume **`pm_data`** is mounted at **`/data`** in the container. **`compose.yaml`** sets **`PM_DATABASE_PATH=/data/pm.db`** so SQLite lives on the volume (see **`docs/DATABASE.md`**). Local runs without Compose default to **`backend/data/pm.db`** when **`PM_DATABASE_PATH`** is unset.
 
 ## Backend tests (host, not container)
 
@@ -49,6 +49,12 @@ The index HTML test is skipped if **`backend/site/`** is missing.
 ## Runtime secrets
 
 Pass or edit `.env` at compose time. Prefer **env file on the host** over embedding secrets in the **`Containerfile`**.
+
+## OpenRouter / AI smoke (Part 8)
+
+- Configure **`OPENROUTER_API_KEY`** in **`.env`** (see **`.env.example`**). Optional: **`OPENROUTER_BASE_URL`** (default `https://openrouter.ai/api/v1`), **`OPENROUTER_MODEL`** (default `openai/gpt-oss-120b`).
+- After signing in, **`POST /api/ai/smoke`** with JSON body `{"message":"..."}` returns `{"reply":"..."}`. **`POST /api/ai/chat`** accepts `{"message":"...","history":[]}` (optional chat turns) and returns `assistant_message`, `board_updated`, and optional `board`; the model is asked for JSON (`response_format` **json_object**) matching **`AiKanbanResponse`** (see **`app/ai_schemas.py`**). Valid `board` updates are saved like **`PUT /api/board`**. Without a key, AI endpoints respond with **503** and a clear message.
+- **Tests:** normal **`uv run pytest`** mocks OpenRouter and does not call the network. To run the optional live call (uses your key and quota), set **`RUN_OPENROUTER_INTEGRATION=1`**, ensure **`OPENROUTER_API_KEY`** is in the environment, then: **`uv run pytest -m integration`**.
 
 ## Session cookie (Part 4)
 
