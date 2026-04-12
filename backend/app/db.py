@@ -14,6 +14,8 @@ DEMO_USERNAME = "user"
 DEMO_PASSWORD = "password"
 
 PBKDF2_ITERATIONS = 120_000
+# TODO(security): _SALT is shared across all users. Replace with a per-user random salt
+# stored alongside the hash (e.g. "salt_hex:hash_hex") before adding real user accounts.
 _SALT = b"pm-mvp-v1"
 
 DEFAULT_RELATIVE = Path(__file__).resolve().parent.parent / "data" / "pm.db"

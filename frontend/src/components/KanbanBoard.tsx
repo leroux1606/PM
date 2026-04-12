@@ -18,8 +18,6 @@ import { LogoutButton } from "@/components/LogoutButton";
 import { fetchBoard, saveBoard } from "@/lib/boardApi";
 import {
   createId,
-  initialData,
-  isBoardEmpty,
   moveCard,
   type BoardData,
 } from "@/lib/kanban";
@@ -46,7 +44,7 @@ export const KanbanBoard = () => {
       .then((data) => {
         const serverJson = JSON.stringify(data);
         lastSavedJson.current = serverJson;
-        setBoard(isBoardEmpty(data) ? initialData : data);
+        setBoard(data);
       })
       .catch((e: unknown) => {
         const msg = e instanceof Error ? e.message : "Failed to load board";
@@ -246,7 +244,10 @@ export const KanbanBoard = () => {
               <KanbanColumn
                 key={column.id}
                 column={column}
-                cards={column.cardIds.map((cardId) => board.cards[cardId])}
+                cards={column.cardIds.flatMap((id) => {
+                  const card = board.cards[id];
+                  return card ? [card] : [];
+                })}
                 onRename={handleRenameColumn}
                 onAddCard={handleAddCard}
                 onDeleteCard={handleDeleteCard}

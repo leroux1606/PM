@@ -43,7 +43,7 @@ class ChatTurn(BaseModel):
 
 class ChatBody(BaseModel):
     message: str = Field(..., min_length=1, max_length=8000)
-    history: list[ChatTurn] = Field(default_factory=list, max_length=24)
+    history: list[ChatTurn] = Field(default_factory=list, max_length=12)
 
 
 @router.post("/smoke")

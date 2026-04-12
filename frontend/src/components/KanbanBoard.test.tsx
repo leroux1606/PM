@@ -18,7 +18,17 @@ describe("KanbanBoard", () => {
         if (init?.method === "PUT") {
           return new Response(null, { status: 200 });
         }
-        return Response.json({ columns: [], cards: {} });
+        // Server now seeds five default columns for a new user.
+        return Response.json({
+          columns: [
+            { id: "col-backlog", title: "Backlog", cardIds: [] },
+            { id: "col-discovery", title: "Discovery", cardIds: [] },
+            { id: "col-progress", title: "In Progress", cardIds: [] },
+            { id: "col-review", title: "Review", cardIds: [] },
+            { id: "col-done", title: "Done", cardIds: [] },
+          ],
+          cards: {},
+        });
       })
     );
   });

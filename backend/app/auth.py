@@ -1,3 +1,4 @@
+import os
 import secrets
 import time
 from typing import Annotated, Optional
@@ -7,6 +8,9 @@ from pydantic import BaseModel
 from sqlite3 import Connection
 
 from app.db import get_db, verify_user_credentials
+
+# Set COOKIE_SECURE=true in production when the app is served over HTTPS.
+COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "false").lower() == "true"
 
 SESSION_TTL_SEC = 7 * 24 * 3600
 SESSION_COOKIE = "pm_session"
@@ -63,7 +67,7 @@ def login(
         samesite="lax",
         max_age=SESSION_TTL_SEC,
         path="/",
-        secure=False,
+        secure=COOKIE_SECURE,
     )
     return {"ok": True, "username": body.username}
 

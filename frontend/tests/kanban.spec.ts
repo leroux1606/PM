@@ -1,9 +1,21 @@
 import { expect, test } from "@playwright/test";
 
+import { initialData } from "../src/lib/kanban";
 import { loginAsDemoUser } from "./helpers/login";
 
 test.beforeEach(async ({ page }) => {
   await loginAsDemoUser(page);
+  // Restore the demo board so every test starts from a known state with all demo cards.
+  await page.evaluate(async (board) => {
+    await fetch("/api/board", {
+      method: "PUT",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(board),
+    });
+  }, initialData);
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "Kanban Studio" })).toBeVisible();
 });
 
 test("loads the kanban board", async ({ page }) => {

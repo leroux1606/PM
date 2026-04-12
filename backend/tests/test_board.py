@@ -31,7 +31,13 @@ def test_get_board_empty_after_login(client: TestClient) -> None:
     _login(client)
     r = client.get("/api/board")
     assert r.status_code == 200
-    assert r.json() == {"columns": [], "cards": {}}
+    body = r.json()
+    # First visit seeds the demo board (5 columns + 8 cards).
+    assert [c["id"] for c in body["columns"]] == [
+        "col-backlog", "col-discovery", "col-progress", "col-review", "col-done"
+    ]
+    assert len(body["cards"]) == 8
+    assert "card-1" in body["cards"]
 
 
 def test_put_get_roundtrip(client: TestClient) -> None:
