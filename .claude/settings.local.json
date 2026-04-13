@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(uv run:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(uv:*)",
+      "Bash(podman compose:*)",
+      "Bash(podman volume:*)",
+      "Bash(echo \"exit: $?\")"
     ]
   }
 }
