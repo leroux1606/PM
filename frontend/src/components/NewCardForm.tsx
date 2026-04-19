@@ -21,10 +21,11 @@ export const NewCardForm = ({ onAdd }: NewCardFormProps) => {
   };
 
   return (
-    <div className="mt-4">
+    <div className="mt-3">
       {isOpen ? (
-        <form onSubmit={handleSubmit} className="space-y-3">
+        <form onSubmit={handleSubmit} className="space-y-2">
           <input
+            autoFocus
             value={formState.title}
             onChange={(event) =>
               setFormState((prev) => ({ ...prev, title: event.target.value }))
@@ -39,13 +40,13 @@ export const NewCardForm = ({ onAdd }: NewCardFormProps) => {
               setFormState((prev) => ({ ...prev, details: event.target.value }))
             }
             placeholder="Details"
-            rows={3}
+            rows={2}
             className="w-full resize-none rounded-xl border border-[var(--stroke)] bg-white px-3 py-2 text-sm text-[var(--gray-text)] outline-none transition focus:border-[var(--primary-blue)]"
           />
           <div className="flex items-center gap-2">
             <button
               type="submit"
-              className="rounded-full bg-[var(--secondary-purple)] px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:brightness-110"
+              className="rounded-lg bg-[var(--secondary-purple)] px-3 py-1.5 text-xs font-semibold text-white transition hover:brightness-110"
             >
               Add card
             </button>
@@ -55,9 +56,23 @@ export const NewCardForm = ({ onAdd }: NewCardFormProps) => {
                 setIsOpen(false);
                 setFormState(initialFormState);
               }}
-              className="rounded-full border border-[var(--stroke)] px-3 py-2 text-xs font-semibold uppercase tracking-wide text-[var(--gray-text)] transition hover:text-[var(--navy-dark)]"
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-[var(--stroke)] text-[var(--gray-text)] transition hover:text-[var(--navy-dark)]"
+              aria-label="Cancel"
             >
-              Cancel
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="11"
+                height="11"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                aria-hidden="true"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
             </button>
           </div>
         </form>
@@ -65,8 +80,22 @@ export const NewCardForm = ({ onAdd }: NewCardFormProps) => {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="w-full rounded-full border border-dashed border-[var(--stroke)] px-3 py-2 text-xs font-semibold uppercase tracking-wide text-[var(--primary-blue)] transition hover:border-[var(--primary-blue)]"
+          className="flex w-full items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-semibold text-[var(--primary-blue)] transition hover:bg-[var(--surface)]"
         >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="13"
+            height="13"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            aria-hidden="true"
+          >
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
           Add a card
         </button>
       )}
